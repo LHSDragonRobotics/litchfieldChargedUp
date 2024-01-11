@@ -43,7 +43,7 @@ public class RobotDrive extends CommandBase {
     if (xbox.getAButton()) {
       divrate = 0.1;
     } else {
-      divrate = 0.3;
+      divrate = 0.4;
     }
 
     double JS_BIAS_X = 0; //  double JS_BIAS_X = .3 
