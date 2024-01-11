@@ -16,7 +16,7 @@ public class RobotDrive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final DriveSubsystem m_subsystem;
   public double divrate = 1;
-  public double rate = 0.1;
+  public double rotrate = 0.1;
 
   private XboxController xbox = RobotContainer.m_driverController;
 
@@ -40,11 +40,15 @@ public class RobotDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (xbox.getAButton()) {
+    double rightTrigger = xbox.getRightTriggerAxis();
+    if (xbox.getLeftStickButton() || xbox.getRightStickButton()) {
       divrate = 0.1;
+      rotrate = 0.1;
     } else {
-      divrate = 0.4;
+      divrate = Math.max(0,(.1/(rightTrigger+.1)));
+      rotrate = Math.max(0,(.1/(rightTrigger+.1)));
     }
+    // System.out.println(String.valueOf(divrate));
 
     double JS_BIAS_X = 0; //  double JS_BIAS_X = .3 
 
@@ -54,7 +58,7 @@ public class RobotDrive extends CommandBase {
     double yrate = xbox.getLeftY();
     yrate *= Math.abs(yrate * divrate); // competition rate is .8 - The lower the decimal the slower it drives
 
-    double zRate = xbox.getRawAxis(4)*.5;
+    double zRate = xbox.getRawAxis(4)*rotrate;
 
     if ( printCount++ % 55 == 0 )
         System.out.println("  DRIVE " + xrate + ", " + yrate + " (" + zRate + ")");
