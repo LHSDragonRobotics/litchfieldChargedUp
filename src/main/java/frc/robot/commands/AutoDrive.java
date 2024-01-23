@@ -17,7 +17,7 @@ public class AutoDrive extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final DriveSubsystem m_subsystem;
 
-  private double rate = 0.1;
+  private double rate = 0.3;
 
   /**
    * Creates a new ExampleCommand.
@@ -26,7 +26,6 @@ public class AutoDrive extends CommandBase {
    */
   public AutoDrive(double rate_param) {
 
-    rate = rate_param;
 
     m_subsystem = RobotContainer.m_robotDrive ;
     
@@ -41,7 +40,7 @@ public class AutoDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     m_subsystem.drive(rate, 0, 0, false, true);
+     m_subsystem.drive(1, 0, 0, false, true);
   }
 
   // Called once the command ends or is interrupted.

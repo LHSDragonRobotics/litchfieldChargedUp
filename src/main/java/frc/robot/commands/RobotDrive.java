@@ -7,6 +7,7 @@ package frc.robot.commands;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -19,6 +20,15 @@ public class RobotDrive extends CommandBase {
   public double rotrate = 0.1;
 
   private XboxController xbox = RobotContainer.m_driverController;
+  private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
+  double tx = tableInstance.getTable("limelight").getEntry("tx").getDouble(0);
+  
+
+
+
+
+
+
 
   private int printCount = 0;
 
@@ -40,7 +50,8 @@ public class RobotDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double rightTrigger = xbox.getRightTriggerAxis();
+
+    double rightTrigger = xbox.getLeftTriggerAxis();
     if (xbox.getLeftStickButton() || xbox.getRightStickButton()) {
       divrate = 0.1;
       rotrate = 0.1;
@@ -61,8 +72,7 @@ public class RobotDrive extends CommandBase {
     double zRate = xbox.getRawAxis(4)*rotrate;
 
     if ( printCount++ % 55 == 0 )
-        System.out.println("  DRIVE " + xrate + ", " + yrate + " (" + zRate + ")");
-
+        //System.out.println("  DRIVE " + xrate + ", " + yrate + " (" + zRate + ")");
 
      m_subsystem.drive(-yrate, -xrate, -zRate, false, true);
   }
