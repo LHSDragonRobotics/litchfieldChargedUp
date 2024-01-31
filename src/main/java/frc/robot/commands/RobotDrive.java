@@ -21,7 +21,6 @@ public class RobotDrive extends CommandBase {
 
   private XboxController xbox = RobotContainer.m_driverController;
   private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
-  double tx = tableInstance.getTable("limelight").getEntry("tx").getDouble(0);
   
 
 
@@ -50,14 +49,24 @@ public class RobotDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    double tx = tableInstance.getTable("limelight").getEntry("tx").getDouble(0);
+    double tagID = tableInstance.getTable("limelight").getEntry("tid").getDouble(0);
+    double[] trans = new double[3];
+    trans = tableInstance.getTable("limelight").getEntry("targetpose_cameraspace").getDoubleArray(new double[6]);
     double rightTrigger = xbox.getLeftTriggerAxis();
+    System.out.println(String.valueOf(trans[5]-10));
     if (xbox.getLeftStickButton() || xbox.getRightStickButton()) {
       divrate = 0.1;
       rotrate = 0.1;
     } else {
       divrate = Math.max(0,(.1/(rightTrigger+.1)));
       rotrate = Math.max(0,(.1/(rightTrigger+.1)));
+    }
+    double zRate;
+    if (xbox.getBButton()) {
+      zRate = tx/80;
+    } else {
+      zRate = xbox.getRawAxis(4)*rotrate;
     }
     // System.out.println(String.valueOf(divrate));
 
@@ -68,11 +77,16 @@ public class RobotDrive extends CommandBase {
     xrate *= Math.abs(xrate * divrate); // competition rate is .8 - The lower the decimal the slower it drives
     double yrate = xbox.getLeftY();
     yrate *= Math.abs(yrate * divrate); // competition rate is .8 - The lower the decimal the slower it drives
+    if (xbox.getYButton() && trans[5] != 0.0d) {
+      xrate = (trans[5]-10)/-20;
+      zRate = tx/80;
+    }
 
-    double zRate = xbox.getRawAxis(4)*rotrate;
+    if (xbox.getXButton()) {
+      System.out.println("  DRIVE " + xrate + ", " + yrate + " (" + zRate + ")");
 
-    if ( printCount++ % 55 == 0 )
-        //System.out.println("  DRIVE " + xrate + ", " + yrate + " (" + zRate + ")");
+    }
+    
 
      m_subsystem.drive(-yrate, -xrate, -zRate, false, true);
   }
